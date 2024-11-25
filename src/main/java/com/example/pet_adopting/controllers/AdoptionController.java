@@ -31,11 +31,7 @@ public class AdoptionController {
     public ResponseEntity<Adoption> getAdoptionById(@PathVariable long id) {
         Optional<Adoption> adoption = adoptionService.getAdoptionById(id);
 
-        if (adoption.isPresent()) {
-            return ResponseEntity.ok(adoption.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return adoption.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // PUT: Update an existing adoption

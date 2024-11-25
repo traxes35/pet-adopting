@@ -5,7 +5,6 @@ import com.example.pet_adopting.services.CityService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cities")
