@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -41,6 +43,8 @@ private User user;
     private String gender;
     private boolean isVaccinated;
     private boolean isActive;
-    private Date  CreatedDate;
+  //  @CreatedDate // Tarihi otomatik oluşturur
+   // @Column(nullable = false, updatable = false) // Bu alan güncellenemez
+   // private LocalDateTime createdDate;
     private String description;
 }

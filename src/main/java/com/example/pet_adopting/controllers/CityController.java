@@ -25,7 +25,7 @@ CityService cityService;
         return cityService.saveOneCity(newCity);
     }
     @GetMapping("/{cityId}")
-    public Optional<City> getOneCity(@PathVariable long cityId) {
+    public City getOneCity(@PathVariable long cityId) {
         return  cityService.getOneCitybyId(cityId);
 
     }

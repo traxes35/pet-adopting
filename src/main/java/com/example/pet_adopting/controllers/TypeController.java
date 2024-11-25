@@ -19,19 +19,19 @@ public class TypeController {
      return typeService.getAllTypes();
     }
     @GetMapping("/{typeId}")
-    public Optional<Type> getTypeById(long typeId) {
+    public Type getTypeById(@PathVariable long typeId) {
         return typeService.getOneTypeById(typeId);
     }
     @PostMapping
-    public Type addType(Type type) {
+    public Type addType(@RequestBody Type type) {
         return typeService.saveOneType(type);
     }
     @PutMapping("/{typeId}")
-    public Type updateType(long typeId,Type type) {
+    public Type updateType(@PathVariable long typeId,@RequestBody Type type) {
         return typeService.updateOneType(typeId,type);
     }
-    @DeleteMapping("/typeId")
-    public void deleteTypeById(long typeId) {
+    @DeleteMapping("/{typeId}")
+    public void deleteTypeById(@PathVariable long typeId) {
         typeService.deleteOneType(typeId);
     }
 }

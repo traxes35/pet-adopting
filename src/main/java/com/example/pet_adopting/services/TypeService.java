@@ -19,8 +19,8 @@ public class TypeService {
     return typeRepository.findAll();
     }
 
-    public Optional<Type> getOneTypeById(long id) {
-    return typeRepository.findById(id);
+    public Type getOneTypeById(long id) {
+    return typeRepository.findById(id).orElse(null);
     }
 
     public Type saveOneType(Type newType) {

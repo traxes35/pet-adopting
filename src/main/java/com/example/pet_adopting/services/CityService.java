@@ -26,8 +26,8 @@ public class CityService {
         return cityRepository.save(newCity);
     }
 
-    public Optional<City> getOneCitybyId(long cityId) {
-        return cityRepository.findById(cityId);
+    public City getOneCitybyId(long cityId) {
+        return cityRepository.findById(cityId).orElse(null);
     }
 
     public City updateOneCity(long cityId, City newCity) {
