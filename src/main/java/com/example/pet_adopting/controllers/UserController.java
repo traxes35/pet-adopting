@@ -19,14 +19,9 @@ public class UserController {
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
-    @PostMapping
-    public User createUser(@RequestBody User newUser) {
-        return userService.saveOneUser(newUser);
-    }
     @GetMapping("/{userId}")
     public User getOneUser(@PathVariable long userId) {
         return userService.getOneUserbyId(userId);
-
     }
     @PutMapping("/{userId}")
     public User updateUser(@PathVariable long userId, @RequestBody User newUser) {

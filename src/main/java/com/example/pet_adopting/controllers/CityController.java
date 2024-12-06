@@ -46,12 +46,25 @@ CityService cityService;
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCity);
     }
     @PutMapping("/{cityId}")
-    public City updateOneCity(@PathVariable long cityId, @RequestBody City newCity) {
-        return cityService.updateOneCity(cityId,newCity);
+    public ResponseEntity<?> updateCity(@PathVariable Long cityId, @RequestBody City city) {
+        City existingCity = cityService.getOneCitybyId(cityId);
+        if (existingCity == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("City with ID " + cityId + " not found.");
+        }
+        city.setId(cityId);
+        City updatedCity = cityService.updateOneCity(cityId,city);
+        return ResponseEntity.ok(updatedCity);
     }
     @DeleteMapping("/{cityId}")
-    public void deleteCity(@PathVariable Long cityId){
+    public void deleteCity(@PathVariable Long cityId) {
+        City existingCity = cityService.getOneCitybyId(cityId);
+        if (existingCity == null) {
+             ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("City with ID " + cityId + " not found.");
+        }
         cityService.deleteCityById(cityId);
+        ResponseEntity.ok("City with ID " + cityId + " has been deleted successfully.");
     }
 }
 

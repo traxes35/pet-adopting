@@ -4,6 +4,7 @@ import com.example.pet_adopting.entities.User;
 import com.example.pet_adopting.repos.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,9 @@ public class UserService {
         this.userRepository = userRepository;
     }
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        return users;
 
     }
 
