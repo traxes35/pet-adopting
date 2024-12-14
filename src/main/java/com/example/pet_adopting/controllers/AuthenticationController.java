@@ -11,6 +11,8 @@ import com.example.pet_adopting.services.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequestMapping("/auth")
 @RestController
 public class AuthenticationController {

@@ -15,6 +15,7 @@ import java.util.Date;
 @Data
 @Table(name = "pet")
 public class Pet {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long id;
 @ManyToOne(fetch = FetchType.LAZY)
@@ -47,4 +48,6 @@ private User user;
    // @Column(nullable = false, updatable = false) // Bu alan güncellenemez
    // private LocalDateTime createdDate;
     private String description;
+    private String imagePath;
+
 }

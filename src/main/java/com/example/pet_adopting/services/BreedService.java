@@ -39,7 +39,6 @@ public class BreedService {
     Breed toSave = new Breed();
          toSave.setName(newBreed.getName());
          toSave.setType(type);
-         toSave.setId(newBreed.getId());
          return breedRepository.save(toSave);
     }
 

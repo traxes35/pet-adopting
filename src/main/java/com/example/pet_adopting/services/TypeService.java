@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public class TypeService {
-    private TypeRepository typeRepository;
+    private final TypeRepository typeRepository;
 
     public TypeService(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;

@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+
 @Entity
 @Table(name = "adoption")
 @Data
 public class Adoption {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private long id;
     @ManyToOne(fetch = FetchType.LAZY)

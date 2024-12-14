@@ -7,9 +7,10 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "Messages")
+@Table(name = "message")
 @Data
 public class Messages {
 
@@ -19,21 +20,29 @@ public class Messages {
 
     @Lob
     @Column(columnDefinition = "text")
-    private String message;
+    private String message; // Mesaj içeriği için daha açıklayıcı bir isim
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false) // Sender için farklı bir sütun adı belirleniyor
+    @JoinColumn(name = "sender_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User sender; // Değişken adı küçük harfle başlatıldı
+    private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id", nullable = false) // Receiver için farklı bir sütun adı belirleniyor
+    @JoinColumn(name = "receiver_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User receiver; // Değişken adı küçük harfle başlatıldı
+    private User receiver;
 
-    @Temporal(TemporalType.TIMESTAMP) // Tarih alanı için doğru anotasyon
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createdDate;
+
+    @Column(nullable = false)
+    private boolean isRead = false; // Yeni: Mesajın okunup okunmadığını takip eder
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = new Date();
+    }
 }

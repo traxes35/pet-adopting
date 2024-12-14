@@ -15,17 +15,20 @@ public class CityService {
     }
 
     public void deleteCityById(Long cityId) {
-        cityRepository.deleteById(cityId);
+        if (cityRepository.existsById(cityId)) {
+            cityRepository.deleteById(cityId);
+        }
     }
-
     public List<City> getAllCities() {
     return cityRepository.findAll();
     }
 
-    public City saveOneCity(City newCity) {
-        return cityRepository.save(newCity);
+    public City saveOneCity(City city) {
+        if (city == null) {
+            throw new IllegalArgumentException("City cannot be null");
+        }
+        return cityRepository.save(city);
     }
-
     public City getOneCitybyId(long cityId) {
         return cityRepository.findById(cityId).orElse(null);
     }

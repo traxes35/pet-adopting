@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-(exclude = {SecurityAutoConfiguration.class })
-@EnableJpaAuditing
+	@EnableJpaAuditing
 
 public class PetAdoptingApplication {
 

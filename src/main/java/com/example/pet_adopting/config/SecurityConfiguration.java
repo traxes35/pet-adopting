@@ -35,12 +35,12 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET,"pets").permitAll()
-                        .requestMatchers(HttpMethod.GET,"users").permitAll()
-                        .requestMatchers(HttpMethod.DELETE,"users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST,"auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/pets").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"auth/verify").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/verify").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -55,10 +55,9 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://app-backend.com", "http://localhost:8080")); //TODO: update backend url
+        configuration.setAllowedOriginPatterns(List.of("*")); // Tüm kökenlere izin verir
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type","Accept"));
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

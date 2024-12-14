@@ -46,7 +46,6 @@ public class PetService {
         }
 
         Pet pet = new Pet();
-        pet.setId(newPet.getId());
         pet.setUser(user);
         pet.setCity(city);
         pet.setType(type);
@@ -57,6 +56,7 @@ public class PetService {
         pet.setVaccinated(newPet.isVaccinated());
         pet.setActive(newPet.isActive());
         pet.setDescription(newPet.getDescription());
+        pet.setImagePath(newPet.getImagePath());
 
         return petRepository.save(pet);
     }
@@ -77,6 +77,24 @@ public class PetService {
     }
 
     public void deletePet(Long id) {
-        petRepository.deleteById(id);
+        Pet pet = petRepository.findById(id).orElse(null);
+        if (pet != null) {
+            petRepository.deleteById(id);
+        }
+    }
+
+    public void updatePetImagePath(Long id, String imagePath) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        pet.setImagePath(imagePath);
+        petRepository.save(pet);
+    }
+
+    public String getPetImagePath(Long id) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        return pet.getImagePath();
     }
 }

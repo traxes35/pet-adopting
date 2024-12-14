@@ -44,12 +44,12 @@ public class AuthenticationService {
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationExpiryDate(LocalDateTime.now().plusMinutes(15));
         user.setActive(false);
-        //sendVerificationEmail(user);
+        sendVerificationEmail(user);
         return userService.saveOneUser(user);
     }
 
     public User authenticate(LoginUserRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
+        User user = userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!user.isActive()) {
@@ -57,7 +57,7 @@ public class AuthenticationService {
         }
 
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
+                    new UsernamePasswordAuthenticationToken(input.getUsername(), input.getPassword())
             );
 
         return user;

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @RestController
 @RequestMapping("/types")
-public class TypeController {
+public class    TypeController {
     TypeService typeService;
 
     public TypeController(TypeService typeService) {
