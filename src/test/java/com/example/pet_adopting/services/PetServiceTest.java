@@ -37,7 +37,6 @@ public class PetServiceTest {
     public void whenCreatePetCalledWithValidRequest_itShouldReturnPet() {
         // Arrange
         CreatePetRequest createPetRequest = CreatePetRequest.builder()
-                .userId(1L)
                 .cityId(1L)
                 .breedId(1L)
                 .typeId(1L)
@@ -112,7 +111,6 @@ public class PetServiceTest {
     public void whenCreatePetCalledWithInvalidUser_itShouldReturnNull() {
         // Arrange
         CreatePetRequest createPetRequest = CreatePetRequest.builder()
-                .userId(99L) // Geçersiz kullanıcı ID
                 .cityId(1L)
                 .breedId(1L)
                 .typeId(1L)
@@ -157,7 +155,6 @@ public class PetServiceTest {
     public void whenCreatePetCalledWithInvalidCity_itShouldReturnNull() {
         // Arrange
         CreatePetRequest createPetRequest = CreatePetRequest.builder()
-                .userId(1L)
                 .cityId(99L) // Geçersiz şehir ID
                 .breedId(1L)
                 .typeId(1L)
@@ -208,7 +205,6 @@ public class PetServiceTest {
     public void whenCreatePetCalledWithInvalidType_itShouldReturnNull() {
         // Arrange
         CreatePetRequest createPetRequest = CreatePetRequest.builder()
-                .userId(1L)
                 .cityId(1L)
                 .breedId(1L)
                 .typeId(99L) // Geçersiz tür ID

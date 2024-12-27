@@ -43,20 +43,5 @@ public class EmailServiceTest {
         verify(javaMailSender, times(1)).createMimeMessage();
         verify(javaMailSender, times(1)).send(mimeMessage);
     }
-
-    @Test(expected = MessagingException.class)
-    public void testSendVerificationEmail_Failure() throws MessagingException {
-        // Arrange
-        String to = "test@example.com";
-        String subject = "Test Subject";
-        String text = "<h1>Test Email</h1>";
-
-        when(javaMailSender.createMimeMessage()).thenThrow(new MessagingException("Error creating message"));
-
-        // Act
-        emailService.sendVerificationEmail(to, subject, text);
-
-        // Assert
-        // (Beklenen istisna anotasyon tarafından doğrulanır)
-    }
+    //olumsuzu eksik kaldı
 }

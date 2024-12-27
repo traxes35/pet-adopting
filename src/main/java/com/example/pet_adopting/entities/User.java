@@ -8,10 +8,12 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 @Builder
@@ -47,7 +49,7 @@ public User() {
 
 }
 
-    public User(Long id, String username, String email, String password, String name, String surname, boolean isActive, String verificationCode, LocalDateTime verificationExpiryDate) {
+    public User(Long id, String username, String email, String password, String name, String surname, boolean isActive, String verificationCode, LocalDateTime verificationExpiryDate,List<Role>roles) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -57,12 +59,16 @@ public User() {
         this.isActive = isActive;
         this.verificationCode = verificationCode;
         this.verificationExpiryDate = verificationExpiryDate;
+        this.roles = roles;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .toList();
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -83,4 +89,11 @@ public User() {
     public boolean isEnabled() {
         return true;
     }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles = new ArrayList<>();
 }

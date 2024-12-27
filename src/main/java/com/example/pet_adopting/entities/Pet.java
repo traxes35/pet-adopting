@@ -18,7 +18,7 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long id;
-@ManyToOne(fetch = FetchType.LAZY)
+@ManyToOne(fetch = FetchType.EAGER)
 @JoinColumn(name ="user_id",nullable = false)
 @OnDelete(action= OnDeleteAction.CASCADE)
 @JsonIgnore

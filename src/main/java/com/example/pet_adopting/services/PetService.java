@@ -35,31 +35,31 @@ public class PetService {
         return petRepository.findById(id).orElse(null);
     }
 
-    public Pet createPet(CreatePetRequest newPet) {
-        User user = userService.getOneUserbyId(newPet.getUserId());
-        City city = cityService.getOneCitybyId(newPet.getCityId());
-        Type type = typeService.getOneTypeById(newPet.getTypeId());
-        Breed breed = breedService.getBreedById(newPet.getBreedId());
+       /* public Pet createPet(CreatePetRequest newPet) {
+            User user = userService.getOneUserbyId(newPet.getUserId());
+            City city = cityService.getOneCitybyId(newPet.getCityId());
+            Type type = typeService.getOneTypeById(newPet.getTypeId());
+            Breed breed = breedService.getBreedById(newPet.getBreedId());
 
-        if (user == null || city == null || type == null || breed == null) {
-            return null;
-        }
+            if (user == null || city == null || type == null || breed == null) {
+                return null;
+            }
 
-        Pet pet = new Pet();
-        pet.setUser(user);
-        pet.setCity(city);
-        pet.setType(type);
-        pet.setBreed(breed);
-        pet.setName(newPet.getName());
-        pet.setAge(newPet.getAge());
-        pet.setGender(newPet.getGender());
-        pet.setVaccinated(newPet.isVaccinated());
-        pet.setActive(newPet.isActive());
-        pet.setDescription(newPet.getDescription());
-        pet.setImagePath(newPet.getImagePath());
+            Pet pet = new Pet();
+            pet.setUser(user);
+            pet.setCity(city);
+            pet.setType(type);
+            pet.setBreed(breed);
+            pet.setName(newPet.getName());
+            pet.setAge(newPet.getAge());
+            pet.setGender(newPet.getGender());
+            pet.setVaccinated(newPet.isVaccinated());
+            pet.setActive(newPet.isActive());
+            pet.setDescription(newPet.getDescription());
+            pet.setImagePath(newPet.getImagePath());
 
-        return petRepository.save(pet);
-    }
+            return petRepository.save(pet);
+        }*/
 
     public Pet updatePet(Long id, UpdatePetRequest updatedPet) {
         Optional<Pet> pet = petRepository.findById(id);
@@ -97,4 +97,31 @@ public class PetService {
 
         return pet.getImagePath();
     }
+
+    public Pet createPetForUser(CreatePetRequest newPet, User user) {
+        City city = cityService.getOneCitybyId(newPet.getCityId());
+        Type type = typeService.getOneTypeById(newPet.getTypeId());
+        Breed breed = breedService.getBreedById(newPet.getBreedId());
+
+        if (city == null || type == null || breed == null) {
+            throw new RuntimeException("Invalid city, type, or breed ID.");
+        }
+
+        // Yeni pet oluştur
+        Pet pet = new Pet();
+        pet.setUser(user); // Giriş yapan kullanıcıyı bağla
+        pet.setCity(city);
+        pet.setType(type);
+        pet.setBreed(breed);
+        pet.setName(newPet.getName());
+        pet.setAge(newPet.getAge());
+        pet.setGender(newPet.getGender());
+        pet.setVaccinated(newPet.isVaccinated());
+        pet.setActive(newPet.isActive());
+        pet.setDescription(newPet.getDescription());
+        pet.setImagePath(newPet.getImagePath());
+
+        return petRepository.save(pet);
+    }
+
 }

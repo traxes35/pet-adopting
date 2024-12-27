@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode
 public class CreatePetRequest {
-    private Long userId;
     private Long cityId;
     private Long typeId;
     private Long breedId;
@@ -24,8 +23,7 @@ public class CreatePetRequest {
 
     }
 
-    public CreatePetRequest( Long userId, Long cityId, Long typeId, Long breedId, String name, int age, String gender, boolean isVaccinated, boolean isActive, String description, String imagePath) {
-        this.userId = userId;
+    public CreatePetRequest( Long cityId, Long typeId, Long breedId, String name, int age, String gender, boolean isVaccinated, boolean isActive, String description, String imagePath) {
         this.cityId = cityId;
         this.typeId = typeId;
         this.breedId = breedId;

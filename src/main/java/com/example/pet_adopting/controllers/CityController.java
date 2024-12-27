@@ -57,14 +57,14 @@ CityService cityService;
         return ResponseEntity.ok(updatedCity);
     }
     @DeleteMapping("/{cityId}")
-    public void deleteCity(@PathVariable Long cityId) {
+    public ResponseEntity<?> deleteCity(@PathVariable Long cityId) {
         City existingCity = cityService.getOneCitybyId(cityId);
         if (existingCity == null) {
-             ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("City with ID " + cityId + " not found.");
         }
         cityService.deleteCityById(cityId);
-        ResponseEntity.ok("City with ID " + cityId + " has been deleted successfully.");
+        return ResponseEntity.ok("City with ID " + cityId + " has been deleted successfully.");
     }
 }
 
