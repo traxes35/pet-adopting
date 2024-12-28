@@ -99,12 +99,16 @@ public class PetService {
     }
 
     public Pet createPetForUser(CreatePetRequest newPet, User user) {
+        if (user == null) {
+            return null; // Kullanıcı null ise işlem yapılmaz
+        }
+
         City city = cityService.getOneCitybyId(newPet.getCityId());
         Type type = typeService.getOneTypeById(newPet.getTypeId());
         Breed breed = breedService.getBreedById(newPet.getBreedId());
 
         if (city == null || type == null || breed == null) {
-            throw new RuntimeException("Invalid city, type, or breed ID.");
+            return null;
         }
 
         // Yeni pet oluştur
@@ -124,4 +128,7 @@ public class PetService {
         return petRepository.save(pet);
     }
 
+    public List<Pet> getPetsByUser(User user) {
+        return petRepository.findAllByUser(user);
+    }
 }

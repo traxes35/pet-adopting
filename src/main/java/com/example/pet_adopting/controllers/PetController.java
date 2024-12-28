@@ -42,6 +42,31 @@ public class PetController {
         List<Pet> pets = petService.getAllPets();
         return ResponseEntity.ok(pets);
     }
+    @GetMapping("/user-pets")
+    public ResponseEntity<List<Pet>> getUserPets() {
+        // Giriş yapan kullanıcının kimlik doğrulama bilgilerini al
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Kullanıcı doğrulama
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Giriş yapan kullanıcının kullanıcı adını al
+        String username = authentication.getName();
+
+        // Kullanıcı bilgilerini repository'den getir
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Kullanıcının petlerini getir
+        User user = userOptional.get();
+        List<Pet> userPets = petService.getPetsByUser(user);
+
+        return ResponseEntity.ok(userPets);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable Long id) {

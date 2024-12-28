@@ -1,13 +1,22 @@
 package com.example.pet_adopting.controllers;
 
 import com.example.pet_adopting.entities.Pet;
+import com.example.pet_adopting.entities.User;
+import com.example.pet_adopting.repos.UserRepository;
 import com.example.pet_adopting.requests.CreatePetRequest;
 import com.example.pet_adopting.requests.UpdatePetRequest;
 import com.example.pet_adopting.services.PetService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +26,20 @@ import static org.mockito.Mockito.*;
 
 public class PetControllerTest {
 
-    private PetController petController;
-    private PetService petService;
+    @InjectMocks
+    private PetController petController; // Test edilen sınıf
+
+    @Mock
+    private PetService petService; // Mocklanan bağımlılık
+
+    @Mock
+    private UserRepository userRepository; // Mocklanan bağımlılık
 
     @Before
     public void setUp() {
-        petService = Mockito.mock(PetService.class);
-        petController = new PetController(petService);
+        MockitoAnnotations.openMocks(this); // Mock nesnelerini başlatır
     }
+
 
     @Test
     public void whenGetPetByIdCalledWithValidId_itShouldReturnPet() {
@@ -72,31 +87,48 @@ public class PetControllerTest {
     @Test
     public void whenCreatePetCalledWithValidRequest_itShouldReturnCreatedPet() {
         // Arrange
-        CreatePetRequest request = new CreatePetRequest();
-        request.setName("Buddy");
-        request.setAge(2);
-        request.setGender("Male");
-        request.setDescription("Friendly dog");
+        CreatePetRequest createPetRequest = CreatePetRequest.builder()
+                .cityId(1L)
+                .breedId(1L)
+                .typeId(1L)
+                .name("Buddy")
+                .gender("Male")
+                .description("Friendly dog")
+                .age(2)
+                .isVaccinated(true)
+                .isActive(true)
+                .imagePath("/images/buddy.jpg")
+                .build();
 
-        Pet createdPet = new Pet();
-        createdPet.setId(1L);
-        createdPet.setName(request.getName());
-        createdPet.setAge(request.getAge());
-        createdPet.setGender(request.getGender());
-        createdPet.setDescription(request.getDescription());
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
 
-        when(petService.createPet(request)).thenReturn(createdPet);
+        Pet expectedPet = new Pet();
+        expectedPet.setId(1L);
+        expectedPet.setUser(user);
+        expectedPet.setName("Buddy");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+        Mockito.when(authentication.getName()).thenReturn("testuser");
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+        Mockito.when(petService.createPetForUser(Mockito.any(CreatePetRequest.class), Mockito.any(User.class))).thenReturn(expectedPet);
 
         // Act
-        ResponseEntity<Pet> response = petController.createPet(request);
+        ResponseEntity<Pet> response = petController.createPet(createPetRequest);
 
         // Assert
         assertNotNull(response);
-        assertEquals(201, response.getStatusCodeValue());
-        assertEquals(createdPet, response.getBody());
-        verify(petService).createPet(request);
-        System.out.println("NEW PET CREATED");
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Buddy", response.getBody().getName());
+        assertEquals(user, response.getBody().getUser());
 
+        Mockito.verify(userRepository).findByUsername("testuser");
+        Mockito.verify(petService).createPetForUser(Mockito.any(CreatePetRequest.class), Mockito.any(User.class));
     }
 
     @Test
@@ -149,15 +181,21 @@ public class PetControllerTest {
     public void whenDeletePetCalledWithValidId_itShouldReturnNoContent() {
         // Arrange
         Long petId = 1L;
+        Pet pet = new Pet();
+        pet.setId(petId);
+        pet.setName("Buddy");
+
+        Mockito.when(petService.getPetById(petId)).thenReturn(pet);
 
         // Act
         ResponseEntity<Void> response = petController.deletePet(petId);
 
         // Assert
         assertNotNull(response);
-        assertEquals(204, response.getStatusCodeValue());
-        verify(petService).deletePet(petId);
-        System.out.println("WE DELETED" + petId + " pet id");
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        Mockito.verify(petService).getPetById(petId);
+        Mockito.verify(petService).deletePet(petId);
     }
     @Test
     public void whenDeletePetCalledWithInvalidId_itShouldReturnNotFound() {

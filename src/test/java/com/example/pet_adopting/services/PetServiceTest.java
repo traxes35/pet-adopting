@@ -40,72 +40,66 @@ public class PetServiceTest {
                 .cityId(1L)
                 .breedId(1L)
                 .typeId(1L)
-                .name("test")
-                .gender("male")
-                .description("test description")
-                .age(1)
+                .name("Buddy")
+                .gender("Male")
+                .description("Friendly dog")
+                .age(2)
                 .isVaccinated(true)
                 .isActive(true)
+                .imagePath("/images/buddy.jpg")
                 .build();
 
-        User user = User.builder()
-                .id(1L)
-                .name("Baris")
-                .surname("Koc")
-                .username("traxes")
-                .password("qwert")
-                .isActive(true)
-                .verificationCode("12345")
-                .verificationExpiryDate(LocalDateTime.now().plusMinutes(15))
-                .build();
+        City city = new City();
+        city.setId(1L);
+        city.setPlate(35);
+        city.setName("Izmir");
 
-        City city = City.builder()
-                .id(1L)
-                .plate(35)
-                .name("İzmir").build();
+        Type type = new Type();
+        type.setId(1L);
+        type.setName("Dog");
 
-        Type type = Type.builder()
-                .id(1L)
-                .name("Dog")
-                .build();
+        Breed breed = new Breed();
+        breed.setId(1L);
+        breed.setName("Golden");
 
-        Breed breed = Breed.builder()
-                .id(1L)
-                .type(type)
-                .name("Golden").build();
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
 
-        Pet pet = new Pet();
-        pet.setUser(user);
-        pet.setCity(city);
-        pet.setType(type);
-        pet.setBreed(breed);
-        pet.setName(createPetRequest.getName());
-        pet.setAge(createPetRequest.getAge());
-        pet.setGender(createPetRequest.getGender());
-        pet.setVaccinated(createPetRequest.isVaccinated());
-        pet.setActive(createPetRequest.isActive());
-        pet.setDescription(createPetRequest.getDescription());
+        Pet expectedPet = new Pet();
+        expectedPet.setId(1L);
+        expectedPet.setUser(user);
+        expectedPet.setCity(city);
+        expectedPet.setType(type);
+        expectedPet.setBreed(breed);
+        expectedPet.setName("Buddy");
+        expectedPet.setAge(2);
+        expectedPet.setGender("Male");
+        expectedPet.setVaccinated(true);
+        expectedPet.setActive(true);
+        expectedPet.setDescription("Friendly dog");
+        expectedPet.setImagePath("/images/buddy.jpg");
 
-        Mockito.when(userService.getOneUserbyId(1L)).thenReturn(user);
         Mockito.when(cityService.getOneCitybyId(1L)).thenReturn(city);
         Mockito.when(typeService.getOneTypeById(1L)).thenReturn(type);
         Mockito.when(breedService.getBreedById(1L)).thenReturn(breed);
-        Mockito.when(petRepository.save(Mockito.any(Pet.class))).thenReturn(pet);
+        Mockito.when(petRepository.save(Mockito.any(Pet.class))).thenReturn(expectedPet);
 
         // Act
-        Pet result = petService.createPet(createPetRequest);
+        Pet result = petService.createPetForUser(createPetRequest, user);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(createPetRequest.getName(), result.getName());
-        assertEquals(createPetRequest.getDescription(), result.getDescription());
+        assertNotNull(result); // Pet null olmamalı
+        assertEquals(expectedPet.getName(), result.getName());
+        assertEquals(expectedPet.getUser(), result.getUser());
+        assertEquals(expectedPet.getCity(), result.getCity());
+        assertEquals(expectedPet.getType(), result.getType());
+        assertEquals(expectedPet.getBreed(), result.getBreed());
 
-        Mockito.verify(userService).getOneUserbyId(1L);
         Mockito.verify(cityService).getOneCitybyId(1L);
         Mockito.verify(typeService).getOneTypeById(1L);
         Mockito.verify(breedService).getBreedById(1L);
-        Mockito.verify(petRepository).save(Mockito.any(Pet.class));
-        System.out.println("selam");
+        Mockito.verify(petRepository).save(Mockito.any(Pet.class)); // Kaydetme işlemi yapılmalı
     }
     @Test
     public void whenCreatePetCalledWithInvalidUser_itShouldReturnNull() {
@@ -114,42 +108,29 @@ public class PetServiceTest {
                 .cityId(1L)
                 .breedId(1L)
                 .typeId(1L)
-                .name("test")
-                .gender("male")
-                .description("test description")
-                .age(1)
+                .name("Buddy")
+                .gender("Male")
+                .description("Friendly dog")
+                .age(2)
                 .isVaccinated(true)
                 .isActive(true)
                 .build();
 
-        City city = City.builder()
-                .id(1L)
-                .plate(35)
-                .name("İzmir").build();
+        City city = City.builder().id(1L).plate(35).name("Izmir").build();
+        Type type = Type.builder().id(1L).name("Dog").build();
+        Breed breed = Breed.builder().id(1L).name("Golden").build();
 
-        Type type = Type.builder()
-                .id(1L)
-                .name("Dog")
-                .build();
-
-        Breed breed = Breed.builder()
-                .id(1L)
-                .type(type)
-                .name("Golden").build();
-
-        Mockito.when(userService.getOneUserbyId(99L)).thenReturn(null); // Kullanıcı bulunamıyor
         Mockito.when(cityService.getOneCitybyId(1L)).thenReturn(city);
         Mockito.when(typeService.getOneTypeById(1L)).thenReturn(type);
         Mockito.when(breedService.getBreedById(1L)).thenReturn(breed);
 
         // Act
-        Pet result = petService.createPet(createPetRequest);
+        Pet result = petService.createPetForUser(createPetRequest, null); // Kullanıcı null
 
         // Assert
-        assertNull(result); // Null döndürülmesini bekliyoruz
+        assertNull(result); // Pet oluşturulmamalı
 
-        Mockito.verify(userService).getOneUserbyId(99L);
-        Mockito.verifyNoInteractions(petRepository); // Pet kaydı yapılmamalı
+        Mockito.verifyNoInteractions(petRepository); // Kaydetme işlemi yapılmamalı
     }
     @Test
     public void whenCreatePetCalledWithInvalidCity_itShouldReturnNull() {
@@ -193,7 +174,7 @@ public class PetServiceTest {
         Mockito.when(breedService.getBreedById(1L)).thenReturn(breed);
 
         // Act
-        Pet result = petService.createPet(createPetRequest);
+        Pet result = petService.createPetForUser(createPetRequest,user);
 
         // Assert
         assertNull(result); // Null döndürülmesini bekliyoruz
@@ -207,48 +188,31 @@ public class PetServiceTest {
         CreatePetRequest createPetRequest = CreatePetRequest.builder()
                 .cityId(1L)
                 .breedId(1L)
-                .typeId(99L) // Geçersiz tür ID
-                .name("test")
-                .gender("male")
-                .description("test description")
-                .age(1)
+                .typeId(99L) // Geçersiz typeId
+                .name("Buddy")
+                .gender("Male")
+                .description("Friendly dog")
+                .age(2)
                 .isVaccinated(true)
                 .isActive(true)
                 .build();
 
-        User user = User.builder()
-                .id(1L)
-                .name("Baris")
-                .surname("Koc")
-                .username("traxes")
-                .password("qwert")
-                .isActive(true)
-                .verificationCode("12345")
-                .verificationExpiryDate(LocalDateTime.now().plusMinutes(15))
-                .build();
+        City city = City.builder().id(1L).plate(35).name("Izmir").build();
+        Breed breed = Breed.builder().id(1L).name("Golden").build();
+        User user = User.builder().id(1L).username("testuser").build();
 
-        City city = City.builder()
-                .id(1L)
-                .plate(35)
-                .name("İzmir").build();
-
-        Breed breed = Breed.builder()
-                .id(1L)
-                .name("Golden").build();
-
-        Mockito.when(userService.getOneUserbyId(1L)).thenReturn(user);
         Mockito.when(cityService.getOneCitybyId(1L)).thenReturn(city);
-        Mockito.when(typeService.getOneTypeById(99L)).thenReturn(null); // Tür bulunamıyor
+        Mockito.when(typeService.getOneTypeById(99L)).thenReturn(null); // Type bulunamıyor
         Mockito.when(breedService.getBreedById(1L)).thenReturn(breed);
 
         // Act
-        Pet result = petService.createPet(createPetRequest);
+        Pet result = petService.createPetForUser(createPetRequest, user);
 
         // Assert
-        assertNull(result); // Null döndürülmesini bekliyoruz
+        assertNull(result); // Pet oluşturulmamalı
 
         Mockito.verify(typeService).getOneTypeById(99L);
-        Mockito.verifyNoInteractions(petRepository); // Pet kaydı yapılmamalı
+        Mockito.verifyNoInteractions(petRepository); // Kaydetme işlemi yapılmamalı
     }
     @Test
     public void whenGetPetCalledWithValidId_itShouldReturnPet() {
